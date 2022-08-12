@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: stg_play_by_play
+    description: Play by play data from nflverse.
+    columns:
+      - name: play_id
+        description: Id for the play.
+        tests:
+          - unique
+          - not_null

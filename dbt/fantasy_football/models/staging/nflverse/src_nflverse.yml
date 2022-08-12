@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: nflverse
-    database: 'main'
+    database: main
     schema: nflverse
     tables:
       - name: play_by_play

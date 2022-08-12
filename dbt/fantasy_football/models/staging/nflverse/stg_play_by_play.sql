@@ -6,6 +6,5 @@ select
     season_type,
     week,
     posteam,
-    defteam,
-
+    defteam
 from {{ source('nflverse','play_by_play') }}
