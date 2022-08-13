@@ -1,10 +1,23 @@
 select
     play_id,
+    drive as drive_id,
     game_id,
-    home_team,
-    away_team,
+    season,
     season_type,
     week,
+    game_date,
+    home_team,
+    away_team,
     posteam,
-    defteam
+    defteam,
+    yardline_100,
+    half_seconds_remaining,
+    game_seconds_remaining,
+    game_half as half,
+    qtr as quarter,
+    qb_dropback,
+    passer_player_id,
+    receiver_player_id,
+    rusher_player_id,
+    touchdown
 from {{ source('nflverse','play_by_play') }}
