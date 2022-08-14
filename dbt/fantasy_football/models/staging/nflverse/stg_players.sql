@@ -7,4 +7,3 @@ select
 	position,
 	position_group
 from {{ source('nflverse','players') }}
-limit 10
