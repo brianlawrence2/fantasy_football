@@ -1,7 +1,7 @@
 {% set positions = ['passer','rusher','receiver'] %}
 
 with play_by_play as (
-    select * from {{ rev('stg_play_by_play') }}
+    select * from {{ ref('stg_play_by_play') }}
 ),
 
 {% for position in positions %}
@@ -16,12 +16,12 @@ with play_by_play as (
 {% endfor %}
 
 unioned as (
-{% for postion in positions %}
+{% for position in positions %}
     select game_id, player_id from {{position}} 
     {% if not loop.last %}
     union 
-    {% endif %}
-{% endfor %}
+    {%- endif %}
+{% endfor -%}
 )
 
 select * from unioned
