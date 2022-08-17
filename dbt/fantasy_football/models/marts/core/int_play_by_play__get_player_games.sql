@@ -12,6 +12,7 @@ with play_by_play as (
         {{position}}_player_id as player_id
     from play_by_play
     where {{position}}_player_id is not null
+    and play_by_play.season_type = 'REG'
 ),
 {% endfor %}
 
