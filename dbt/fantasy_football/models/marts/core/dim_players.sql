@@ -15,7 +15,8 @@ player_games_count as (
         player_games.player_id,
         count(distinct player_games.game_id) career_games
     from player_games
-)
+    group by player_games.player_id
+),
 
 joined as (
     select 
