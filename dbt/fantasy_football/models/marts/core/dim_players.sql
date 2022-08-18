@@ -25,10 +25,10 @@ player_games_count as (
     select
         play_by_play.{{position}}_player_id as player_id,
         sum(yards_gained) total_yards_gained,
-	    sum(case when pass == 1 then yards_gained else 0 end) as
+	    sum(case when pass == 1 and rush == 0 then yards_gained else 0 end) as
             {% if position == 'passer' %} passing_yards_gained {% else %} receiving_yards_gained {% endif %}, 
         {% if position == 'passer' %} 0 as receiving_yards_gained {% else %} 0 as passing_yards_gained {% endif %},
-	    sum(case when rush == 1 then yards_gained else 0 end) rushing_yards_gained,
+	    sum(case when rush == 1 and pass == 0 then yards_gained else 0 end) rushing_yards_gained,
 	    sum(touchdown) as touchdowns,
 	    sum(complete_pass) as 
             {% if position == 'passer' %} completions {% else %} receptions {% endif %},
