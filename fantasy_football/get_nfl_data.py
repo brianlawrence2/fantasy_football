@@ -40,9 +40,17 @@ def load_duckdb(con, table):
     for file in os.listdir(path/table):
         print(f'loading: {path/table/file}')
         df = pd.read_parquet(path/table/file)
-        res = con.execute(f'CREATE TABLE IF NOT EXISTS {table} AS SELECT * FROM df')
+        res = con.execute(f'CREATE TABLE IF NOT EXISTS nflverse.{table} AS SELECT * FROM df')
         if not res.fetchall():
-            con.execute(f'INSERT INTO {table} SELECT * FROM df')
+            con.execute(f'INSERT INTO nflverse.{table} SELECT * FROM df')
+            
+def load_bigquery(table):
+    path = Path('data')
+    for file in os.listdir(path/table):
+        print(f'Loading into BigQuery: {path/table/file}')
+        df = pd.read_parquet(path/table/file)
+        file_name = file.replace('.parquet','')
+        df.to_gbq(f'nflverse.{file_name}', project_id='fantasyvbd', if_exists='replace')
     
         
 if __name__ == '__main__':
@@ -53,10 +61,16 @@ if __name__ == '__main__':
     #get_players()
     #get_drafts(seasons)
     
-    con = duckdb.connect('data/duckdb/fantasy_football.duckdb')
-    load_duckdb(con, 'play_by_play')
-    load_duckdb(con, 'draft_picks')
-    load_duckdb(con, 'players')
-    load_duckdb(con, 'weekly_rosters')
-    con.close()
+    #con = duckdb.connect('data/duckdb/fantasy_football.duckdb')
+    #con.execute('CREATE SCHEMA IF NOT EXISTS nflverse')
+    #load_duckdb(con, 'play_by_play')
+    #load_duckdb(con, 'draft_picks')
+    #load_duckdb(con, 'players')
+    #load_duckdb(con, 'weekly_rosters')
+    #con.close()
+    
+    load_bigquery('play_by_play')
+    load_bigquery('draft_picks')
+    load_bigquery('players')
+    load_bigquery('weekly_rosters')
     

@@ -20,7 +20,7 @@ unioned as (
 {% for position in positions %}
     select game_id, player_id from {{position}} 
     {% if not loop.last %}
-    union 
+    union distinct
     {%- endif %}
 {% endfor -%}
 )
