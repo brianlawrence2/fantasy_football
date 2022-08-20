@@ -34,5 +34,6 @@ select
     rush_attempt,
     pass_attempt,
     pass,
-    rush
+    rush,
+    sack
 from {{ source('nflverse','play_by_play') }}
