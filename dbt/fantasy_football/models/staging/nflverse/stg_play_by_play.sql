@@ -35,5 +35,7 @@ select
     pass_attempt,
     pass,
     rush,
-    sack
+    sack,
+    fumble,
+    case when two_point_conv_result = 'success' then 1 else 0 end as two_point_conversions
 from {{ source('nflverse','play_by_play') }}
