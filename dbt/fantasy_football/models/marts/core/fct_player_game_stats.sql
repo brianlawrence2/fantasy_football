@@ -23,6 +23,7 @@ passer_game_stats AS (
     sum(pbp.fumble) as passer_fumbles,
     sum(pbp.two_point_conversions) as passer_two_point_conversions
   FROM play_by_play AS pbp
+  where pbp.season_type = 'REG'
   GROUP BY 1,2,3,4
 ),
 
@@ -49,8 +50,8 @@ rusher_game_stats AS (
     pbp.season,
     pbp.week,
     pbp.game_id,
-    SUM(CASE WHEN pbp.pass = 0 AND pbp.rush = 1 or sack = 1 THEN pbp.yards_gained ELSE 0 END ) AS rushing_yards,
-    SUM(case when pbp.rush = 1 or sack = 1 then 1 else 0 end) AS rushing_attempts,
+    SUM(CASE WHEN pbp.rush = 1 or sack = 1 or qb_scramble = 1 THEN pbp.yards_gained ELSE 0 END ) AS rushing_yards,
+    SUM(case when pbp.rush = 1 or sack = 1 or qb_scramble = 1 then 1 else 0 end) AS rushing_attempts,
     sum(pbp.touchdown) rushing_touchdowns,
     sum(pbp.fumble) as rusher_fumbles,
     sum(pbp.two_point_conversions) as rusher_two_point_conversions
@@ -79,8 +80,8 @@ joined as (
     receiver_game_stats.receiving_touchdowns,
     receiver_game_stats.receiver_two_point_conversions,
 
-    rusher_game_stats.rushing_yards,
     rusher_game_stats.rushing_attempts,
+    rusher_game_stats.rushing_yards,
     rusher_game_stats.rushing_touchdowns,
     rusher_game_stats.rusher_two_point_conversions,
 
@@ -132,6 +133,10 @@ final as (
         rushing_yards,
         rushing_attempts,
         rushing_touchdowns,
+
+        two_point_conversions,
+        fumbles,
+
         {{ safe_divide('rushing_yards','rushing_attempts') }} as yards_per_rushing_attempt,
         {{ safe_divide('rushing_attempts','rushing_touchdowns') }} as rushing_attempt_to_touchdown_rate,
 
