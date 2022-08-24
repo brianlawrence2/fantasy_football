@@ -8,4 +8,4 @@ sources:
       - name: play_by_play
       - name: draft_picks
       - name: players
-      - name: weekly_rosters
+      - name: roster_weekly_2022
