@@ -10,8 +10,8 @@ games as (
 grouped as (
     select
         player_id,
-        season,
 
+        count(distinct games.season) as seasons_played,
         count(distinct games.game_id) as games_played,
         sum(passing_yards) as passing_yards,
         sum(passing_air_yards) as passing_air_yards,
@@ -37,15 +37,15 @@ grouped as (
     from 
         player_game_stats
         inner join games on player_game_stats.game_id = games.game_id
-    group by 1, 2
+    group by 1
 ),
 
 calculate_points as (
 
     select
         player_id,
-        season,
 
+        seasons_played,
         games_played,
         passing_yards,
         passing_air_yards,
@@ -92,8 +92,8 @@ final as (
 
     select
         player_id,
-        season,
 
+        seasons_played,
         games_played,
         passing_yards,
         passing_air_yards,

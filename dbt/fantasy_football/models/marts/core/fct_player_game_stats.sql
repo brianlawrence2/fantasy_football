@@ -13,14 +13,14 @@ passer_game_stats AS (
     pbp.season,
     pbp.week,
     pbp.game_id,
-    SUM(CASE WHEN pbp.pass = 1 AND pbp.rush = 0 and pbp.sack = 0 THEN pbp.yards_gained ELSE 0 END ) AS passing_yards,
+    SUM(CASE WHEN pbp.complete_pass = 1 or pbp.incomplete_pass = 1 THEN pbp.yards_gained ELSE 0 END ) AS passing_yards,
     SUM(pbp.air_yards) AS passing_air_yards,
     SUM(pbp.complete_pass + pbp.incomplete_pass + pbp.interception) AS attempts,
     SUM(pbp.complete_pass) AS completions,
-    SUM(pbp.touchdown) AS passing_touchdowns,
+    SUM(case when pbp.interception = 0 then pbp.touchdown else 0 end) AS passing_touchdowns,
     SUM(pbp.interception) AS interceptions,
     SUM(pbp.sack) as sacks,
-    sum(pbp.fumble) as passer_fumbles,
+    sum(pbp.fumble_lost) as passer_fumbles,
     sum(pbp.two_point_conversions) as passer_two_point_conversions
   FROM play_by_play AS pbp
   where pbp.season_type = 'REG'
@@ -38,7 +38,7 @@ receiver_game_stats AS (
     SUM(pbp.complete_pass + pbp.incomplete_pass + pbp.interception) AS targets,
     SUM(pbp.complete_pass) AS receptions,
     SUM(pbp.touchdown) AS receiving_touchdowns,
-    sum(pbp.fumble) as receiver_fumbles,
+    sum(pbp.fumble_lost) as receiver_fumbles,
     sum(pbp.two_point_conversions) as receiver_two_point_conversions
   FROM play_by_play AS pbp
   GROUP BY 1,2,3,4
@@ -50,10 +50,10 @@ rusher_game_stats AS (
     pbp.season,
     pbp.week,
     pbp.game_id,
-    SUM(CASE WHEN pbp.rush = 1 or sack = 1 or qb_scramble = 1 THEN pbp.yards_gained ELSE 0 END ) AS rushing_yards,
-    SUM(case when pbp.rush = 1 or sack = 1 or qb_scramble = 1 then 1 else 0 end) AS rushing_attempts,
+    SUM(CASE WHEN pbp.play_type in ('run','qb_kneel') THEN pbp.yards_gained ELSE 0 END ) AS rushing_yards,
+    SUM(case when pbp.play_type in ('run','qb_kneel') then 1 else 0 end) AS rushing_attempts,
     sum(pbp.touchdown) rushing_touchdowns,
-    sum(pbp.fumble) as rusher_fumbles,
+    sum(pbp.fumble_lost) as rusher_fumbles,
     sum(pbp.two_point_conversions) as rusher_two_point_conversions
   FROM play_by_play AS pbp
   GROUP BY 1,2,3,4
@@ -81,12 +81,12 @@ joined as (
     receiver_game_stats.receiver_two_point_conversions,
 
     rusher_game_stats.rushing_attempts,
-    rusher_game_stats.rushing_yards,
+    rusher_game_stats.rushing_yards,  
     rusher_game_stats.rushing_touchdowns,
     rusher_game_stats.rusher_two_point_conversions,
 
     passer_two_point_conversions + receiver_two_point_conversions + rusher_two_point_conversions as two_point_conversions,
-    passer_fumbles + receiver_fumbles + rusher_fumbles as fumbles
+    ifnull(passer_fumbles,0) + ifnull(receiver_fumbles,0) + ifnull(rusher_fumbles,0) as fumbles
   from 
     player_games
   left join
