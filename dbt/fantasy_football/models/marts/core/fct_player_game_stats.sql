@@ -7,6 +7,10 @@ play_by_play as (
   select * from {{ ref('stg_play_by_play') }}
 ),
 
+efpa as (
+  select * from {{ ref('stg_efpa') }}
+),
+
 passer_game_stats AS (
   SELECT
     pbp.passer_player_id AS player_id,
@@ -21,8 +25,10 @@ passer_game_stats AS (
     SUM(pbp.interception) AS interceptions,
     SUM(pbp.sack) as sacks,
     sum(pbp.fumble_lost) as passer_fumbles,
-    sum(pbp.two_point_conversions) as passer_two_point_conversions
+    sum(pbp.two_point_conversions) as passer_two_point_conversions,
+    sum(efpa.QB_EFPA) as QB_EFPA
   FROM play_by_play AS pbp
+  left join efpa on pbp.play_id = efpa.play_id
   where pbp.season_type = 'REG'
   GROUP BY 1,2,3,4
 ),
@@ -39,8 +45,10 @@ receiver_game_stats AS (
     SUM(pbp.complete_pass) AS receptions,
     SUM(pbp.touchdown) AS receiving_touchdowns,
     sum(pbp.fumble_lost) as receiver_fumbles,
-    sum(pbp.two_point_conversions) as receiver_two_point_conversions
+    sum(pbp.two_point_conversions) as receiver_two_point_conversions,
+    sum(efpa.FLEX_EFPA) as rusher_FLEX_EFPA
   FROM play_by_play AS pbp
+  left join efpa on pbp.play_id = efpa.play_id
   GROUP BY 1,2,3,4
 ),
 
@@ -54,8 +62,10 @@ rusher_game_stats AS (
     SUM(case when pbp.play_type in ('run','qb_kneel') then 1 else 0 end) AS rushing_attempts,
     sum(pbp.touchdown) rushing_touchdowns,
     sum(pbp.fumble_lost) as rusher_fumbles,
-    sum(pbp.two_point_conversions) as rusher_two_point_conversions
+    sum(pbp.two_point_conversions) as rusher_two_point_conversions,
+    sum(efpa.FLEX_EFPA) as receiver_FLEX_EFPA
   FROM play_by_play AS pbp
+  left join efpa on pbp.play_id = efpa.play_id
   GROUP BY 1,2,3,4
 ),
 
@@ -72,6 +82,7 @@ joined as (
     passer_game_stats.interceptions,
     passer_game_stats.sacks,
     passer_game_stats.passer_two_point_conversions,
+    passer_game_stats.QB_EFPA,
 
     receiver_game_stats.receiving_yards,
     receiver_game_stats.receiving_air_yards,
@@ -79,11 +90,13 @@ joined as (
     receiver_game_stats.receptions,
     receiver_game_stats.receiving_touchdowns,
     receiver_game_stats.receiver_two_point_conversions,
+    receiver_game_stats.receiver_FLEX_EFPA,
 
     rusher_game_stats.rushing_attempts,
     rusher_game_stats.rushing_yards,  
     rusher_game_stats.rushing_touchdowns,
     rusher_game_stats.rusher_two_point_conversions,
+    rusher_game_stats.rusher_FLEX_EFPA,
 
     passer_two_point_conversions + receiver_two_point_conversions + rusher_two_point_conversions as two_point_conversions,
     ifnull(passer_fumbles,0) + ifnull(receiver_fumbles,0) + ifnull(rusher_fumbles,0) as fumbles
@@ -118,6 +131,7 @@ final as (
         {{ safe_divide('attempts','passing_touchdowns') }} as attempt_to_touchdown_rate,
         {{ safe_divide('attempts','interceptions') }} as attempt_to_interception_rate,
         {{ safe_divide('passing_yards','passing_air_yards') }} as passing_air_yard_rate,
+        QB_EFPA,
 
         receiving_yards,
         receiving_air_yards,
@@ -129,10 +143,12 @@ final as (
         {{ safe_divide('receiving_yards','receiving_air_yards') }} as receiving_air_yard_rate,
         receiving_touchdowns,
         {{ safe_divide('targets','receiving_touchdowns') }} as target_to_touchdown_rate,
+        receiver_FLEX_EFPA,
 
         rushing_yards,
         rushing_attempts,
         rushing_touchdowns,
+        rusher_FLEX_EFPA,
 
         two_point_conversions,
         fumbles,
