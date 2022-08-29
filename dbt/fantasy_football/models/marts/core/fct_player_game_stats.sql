@@ -46,7 +46,7 @@ receiver_game_stats AS (
     SUM(pbp.touchdown) AS receiving_touchdowns,
     sum(pbp.fumble_lost) as receiver_fumbles,
     sum(pbp.two_point_conversions) as receiver_two_point_conversions,
-    sum(efpa.FLEX_EFPA) as rusher_FLEX_EFPA
+    sum(efpa.FLEX_EFPA) as receiver_FLEX_EFPA
   FROM play_by_play AS pbp
   left join efpa on pbp.play_id = efpa.play_id
   GROUP BY 1,2,3,4
@@ -63,7 +63,7 @@ rusher_game_stats AS (
     sum(pbp.touchdown) rushing_touchdowns,
     sum(pbp.fumble_lost) as rusher_fumbles,
     sum(pbp.two_point_conversions) as rusher_two_point_conversions,
-    sum(efpa.FLEX_EFPA) as receiver_FLEX_EFPA
+    sum(efpa.FLEX_EFPA) as rusher_FLEX_EFPA
   FROM play_by_play AS pbp
   left join efpa on pbp.play_id = efpa.play_id
   GROUP BY 1,2,3,4

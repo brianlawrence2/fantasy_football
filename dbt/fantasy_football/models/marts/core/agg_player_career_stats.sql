@@ -27,12 +27,12 @@ grouped as (
         sum(targets) as targets,
         sum(receptions) as receptions,
         sum(receiving_touchdowns) as receiving_touchdowns,
-        sum(receiving_FLEX_EFPA) as receiving_FLEX_EFPA,
+        sum(receiver_FLEX_EFPA) as receiving_FLEX_EFPA,
 
         sum(rushing_yards) as rushing_yards,
         sum(rushing_attempts) as rushing_attempts,
         sum(rushing_touchdowns) as rushing_touchdowns,
-        sum(rushing_FLEX_EFPA) as rushing_FLEX_EFPA,
+        sum(rusher_FLEX_EFPA) as rushing_FLEX_EFPA,
 
         sum(two_point_conversions) as two_point_conversions,
         sum(fumbles) as fumbles
@@ -75,14 +75,14 @@ calculate_points as (
         {{ safe_divide('receiving_yards','receiving_air_yards') }} as receiving_air_yard_rate,
         receiving_touchdowns,
         {{ safe_divide('targets','receiving_touchdowns') }} as target_to_touchdown_rate,
-        {{ safe_divide('receiver_FLEX_EFPA','games_played') }} as receiver_FLEX_EPA,
+        {{ safe_divide('receiving_FLEX_EFPA','games_played') }} as receiver_FLEX_EFPA_per_game,
 
         rushing_yards,
         rushing_attempts,
         rushing_touchdowns,
         {{ safe_divide('rushing_yards','rushing_attempts') }} as yards_per_rushing_attempt,
         {{ safe_divide('rushing_attempts','rushing_touchdowns') }} as rushing_attempt_to_touchdown_rate,
-        {{ safe_divide('rusher_FLEX_EFPA','games_played') }} as rusher_FLEX_EPA,
+        {{ safe_divide('rushing_FLEX_EFPA','games_played') }} as rusher_FLEX_EFPA_per_game,
 
         fumbles,
 
@@ -114,7 +114,7 @@ final as (
         attempt_to_touchdown_rate,
         attempt_to_interception_rate,
         passing_air_yard_rate,
-        QB_EFPA,
+        QB_EFPA_per_game,
 
         receiving_yards,
         receiving_air_yards,
@@ -126,14 +126,14 @@ final as (
         receiving_air_yard_rate,
         receiving_touchdowns,
         target_to_touchdown_rate,
-        receiver_FLEX_EFPA,
+        receiver_FLEX_EFPA_per_game,
 
         rushing_yards,
         rushing_attempts,
         rushing_touchdowns,
         yards_per_rushing_attempt,
         rushing_attempt_to_touchdown_rate,
-        rusher_FLEX_EFPA,
+        rusher_FLEX_EFPA_per_game,
 
         fumbles,
 
