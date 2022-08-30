@@ -44,13 +44,13 @@ def load_duckdb(con, table):
         if not res.fetchall():
             con.execute(f'INSERT INTO nflverse.{table} SELECT * FROM df')
             
-def load_bigquery(table):
+def load_bigquery(dataset,table):
     path = Path('data')
     for file in os.listdir(path/table):
         print(f'Loading into BigQuery: {path/table/file}')
         df = pd.read_parquet(path/table/file)
         file_name = file.replace('.parquet','')
-        df.to_gbq(f'nflverse.{file_name}', project_id='fantasyvbd', if_exists='replace')
+        df.to_gbq(f'{dataset}.{file_name}', project_id='fantasyvbd', if_exists='replace')
     
         
 if __name__ == '__main__':
@@ -69,8 +69,10 @@ if __name__ == '__main__':
     #load_duckdb(con, 'weekly_rosters')
     #con.close()
     
-    load_bigquery('play_by_play')
-    load_bigquery('draft_picks')
-    load_bigquery('players')
-    load_bigquery('weekly_rosters')
+    #load_bigquery('nflverse','play_by_play')
+    #load_bigquery('nflverse','draft_picks')
+    #load_bigquery('nflverse','players')
+    #load_bigquery('nflverse','weekly_rosters')
+    
+    load_bigquery('fantasypros','fantasypros_consensus_rankings')
     
