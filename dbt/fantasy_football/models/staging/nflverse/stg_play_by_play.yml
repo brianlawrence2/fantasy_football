@@ -12,3 +12,5 @@ models:
 
   - name: stg_players
     description: Players
+
+  - name: stg_fantasypros_consensus_rankings
