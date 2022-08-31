@@ -19,9 +19,9 @@ player_games_summary as (
         min(player_games.game_id) first_game,
         max(player_games.game_id) last_game
     from 
-        player_games
-    inner join
-        players on player_games.player_id = players.player_id
+        players
+    left join
+        player_games on player_games.player_id = players.player_id
     group by 
         1,2,3,4,5,6,7
 )
