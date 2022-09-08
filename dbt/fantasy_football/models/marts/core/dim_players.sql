@@ -8,7 +8,7 @@ player_games as (
 
 player_games_summary as (
     select
-        player_games.player_id,
+        players.player_id,
         players.first_name,
         players.last_name,
         players.display_name,

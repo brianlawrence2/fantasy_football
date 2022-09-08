@@ -29,6 +29,8 @@ passer_game_stats AS (
     sum(efpa.QB_EFPA) as QB_EFPA
   FROM play_by_play AS pbp
   left join efpa on pbp.play_id = efpa.play_id
+    and pbp.game_id = efpa.game_id
+    and pbp.drive_id = efpa.drive_id
   where pbp.season_type = 'REG'
   GROUP BY 1,2,3,4
 ),
@@ -49,6 +51,8 @@ receiver_game_stats AS (
     sum(efpa.FLEX_EFPA) as receiver_FLEX_EFPA
   FROM play_by_play AS pbp
   left join efpa on pbp.play_id = efpa.play_id
+    and pbp.game_id = efpa.game_id
+    and pbp.drive_id = efpa.drive_id
   GROUP BY 1,2,3,4
 ),
 
@@ -66,6 +70,8 @@ rusher_game_stats AS (
     sum(efpa.FLEX_EFPA) as rusher_FLEX_EFPA
   FROM play_by_play AS pbp
   left join efpa on pbp.play_id = efpa.play_id
+    and pbp.game_id = efpa.game_id
+    and pbp.drive_id = efpa.drive_id
   GROUP BY 1,2,3,4
 ),
 
