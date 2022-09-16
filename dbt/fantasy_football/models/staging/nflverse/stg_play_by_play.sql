@@ -6,8 +6,20 @@ select
     season_type,
     week,
     game_date,
-    home_team,
-    away_team,
+    case
+        when home_team = 'STL' then 'LAR'
+        when home_team = 'LA' then 'LAR'
+        when home_team = 'SD' then 'LAC'
+        when home_team = 'OAK' then 'LV'
+        else home_team
+    end as home_team,
+    case
+        when away_team = 'STL' then 'LAR'
+        when away_team = 'LA' then 'LAR'
+        when away_team = 'SD' then 'LAC'
+        when away_team = 'OAK' then 'LV'
+        else away_team
+    end as away_team,
     posteam,
     defteam,
     yardline_100,
