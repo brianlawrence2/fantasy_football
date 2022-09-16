@@ -54,10 +54,11 @@ def load_bigquery(dataset,table):
     
         
 if __name__ == '__main__':
-    seasons = range(1999,2022)
+    #seasons = range(1999,2022)
+    seasons = [2022]
     
     #get_pbp(seasons)
-    #get_weekly_rosters(range(2002,2023))
+    #get_weekly_rosters(seasons)
     #get_players()
     #get_drafts(seasons)
     
@@ -74,5 +75,5 @@ if __name__ == '__main__':
     #load_bigquery('nflverse','players')
     #load_bigquery('nflverse','weekly_rosters')
     
-    load_bigquery('fantasypros','fantasypros_consensus_rankings')
+    #load_bigquery('fantasypros','fantasypros_consensus_rankings')
     
