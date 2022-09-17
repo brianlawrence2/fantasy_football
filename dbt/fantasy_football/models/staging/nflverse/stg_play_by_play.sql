@@ -55,5 +55,7 @@ select
     sack,
     fumble,
     fumble_lost,
-    case when two_point_conv_result = 'success' then 1 else 0 end as two_point_conversions
+    case when two_point_conv_result = 'success' then 1 else 0 end as two_point_conversions,
+    total_home_score,
+    total_away_score
 from {{ source('nflverse','play_by_play') }}
